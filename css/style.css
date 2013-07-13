@@ -1,0 +1,54 @@
+@font-face {
+    font-family: 'mozTT';
+    src: url('../fonts/moztt_regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+html {
+  font-size: 100%;
+  height: 100%;
+}
+body {
+  background-color: #005471;
+  color: #333;
+  font-family: 'PT Sans';
+  margin: 0;
+  height: 100%;
+  font-size: 1.2rem;
+}
+h1 {
+  font-size: 2em;
+  color: #fff;
+  text-align: center;
+  font-family: 'PT Sans Narrow';
+  margin: 0;
+  padding: 0.25rem 0;
+  font-weight: normal;
+}
+h2 {
+  font-size: 2em;
+  color: #ffe900;
+  font-family: 'PT Sans Narrow';
+  margin: 0;
+  font-weight: lighter;
+  margin: 0 0 0.8rem;
+  text-transform: uppercase;
+  text-align: center;
+}
+#subheader {
+  background: #005471 url(../images/subheader-bg.jpg) no-repeat center center;
+  background-size: 100% auto;
+  height: 8rem;
+}
+#content-wrapper {
+  padding: 0.8rem;
+}
+#content {
+  background-color: #fff;
+  box-shadow: 7px 7px 0 #90a0a7;
+  padding: 20px; 
+}
+
+img {
+  max-width: 100%;
+}
