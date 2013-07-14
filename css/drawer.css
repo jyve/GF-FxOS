@@ -5,7 +5,6 @@
 /* Main region */
 section#drawer {
   width: 100%;
-  height: 100%;
   transition: all 0.25s ease;
   position: relative;
   z-index: 100;
@@ -41,7 +40,7 @@ section#drawer > header:first-child > a .icon {
 }
 
 section#drawer > header:first-child > a .icon.icon-menu {
-  background-image: url(../images/icons/menu.png);
+  background-image: url(../images/menu.png);
   background-position: center center;
   width: 2rem;
 }
