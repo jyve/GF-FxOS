@@ -24,7 +24,7 @@ section#drawer header a {
   position: absolute;
   left: 0.5rem;
   top: 0.5rem;
-  width: 2rem;
+  width: 2.6rem;
   height: 2rem;
   background: #00586c;
   border-radius: 1.5rem;
@@ -44,19 +44,13 @@ section#drawer header:first-child > a .icon {
 section#drawer header:first-child > a .icon.icon-menu {
   background-image: url(../images/menu.png);
   background-position: center center;
-  width: 2rem;
 }
 section#drawer header a.icon-back {
   background-image: url(../images/back.png);
   background-position: center center;
   background-repeat: no-repeat;
-  width: 2rem;
   text-indent: -10000px;
   overflow: hidden;
-}
-
-section#drawer header:first-child > a .icon:after {
-  width: 2rem;
 }
 
 /* Hide anchor to change target */
