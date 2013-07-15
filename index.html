@@ -6,7 +6,9 @@
 <script src="js/jquery-2.0.0.min.js"></script>
 <script src="js/app.js"></script>
 <link type="text/css" rel="stylesheet" href="css/style.css" media="all" />
-<link type="text/css" rel="stylesheet" href="css/drawer.css" media="all" />
+<link type="text/css" rel="stylesheet" href="css/navigation.css" media="all" />
+<link href="css/toolbars.css" rel="stylesheet" type="text/css">
+<link href="css/action_icons.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <section data-type="sidebar" role="region">
@@ -30,17 +32,31 @@
   </nav>
 </section>
 <section id="drawer">
-  <header>
-    <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
-    <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
-    <h1>#GF13</h1>
-  </header>
-  <div role="main">
-	  <div id="subheader"></div>
-		<div id="content-wrapper">
-		  <h2>Gentse Feesten!</h2>
-		  <div id="content"></div>
-		</div>
+  <div role="main" id="page-wrapper">
+    <!--  frontpage -->
+    <div id="front" class="page">
+      <header>
+		    <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
+		    <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
+		    <h1>#GF13</h1>
+		  </header>
+		   <div id="subheader"></div>
+		   <div id="content-wrapper">
+		     <h2>Gentse Feesten!</h2>
+		     <div id="content"></div>
+		   </div>    
+    </div>
+    <!-- detailpage -->
+    <div id="event-detail" class="page">
+      <header>
+        <button><span class="icon icon-back">back</span></button>
+        <h1>#GF13</h1>
+      </header>
+       <div id="content-wrapper">
+         <h2>Eventnaam</h2>
+         <div id="content">Eventdetail</div>
+       </div>    
+    </div>    
   </div>
 </section>
 

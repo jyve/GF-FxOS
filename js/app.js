@@ -54,6 +54,18 @@ $(function() {
     };
   }
 
+  /*
+   * Add event listeners for the navigation elements.
+   */
+  function addEventListeners () {
+
+    /* Go to event detail page onclick */
+    $('#content').on('click', '.teaser', function(){
+      $('.page').hide();
+      $('#event-detail').show();
+    });
+    
+  }
   
   /*
    * Read the events.json file and return it's content.
@@ -110,4 +122,5 @@ $(function() {
   }
   
   openDb(getUpcomingEvents);
+  addEventListeners();
 });
