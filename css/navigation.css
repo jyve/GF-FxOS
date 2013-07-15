@@ -9,6 +9,8 @@ section#drawer {
   position: relative;
   z-index: 100;
   background-color: #005471;
+  height: 100%;
+  overflow: hidden;
 }
 section#drawer header {
   background: #007390;
@@ -44,13 +46,17 @@ section#drawer header:first-child > a .icon.icon-menu {
   background-position: center center;
   width: 2rem;
 }
+section#drawer header a.icon-back {
+  background-image: url(../images/back.png);
+  background-position: center center;
+  background-repeat: no-repeat;
+  width: 2rem;
+  text-indent: -10000px;
+  overflow: hidden;
+}
 
 section#drawer header:first-child > a .icon:after {
   width: 2rem;
-}
-
-section#drawer header:first-child > a {
-  background-position: 4rem center;
 }
 
 /* Hide anchor to change target */
@@ -157,22 +163,16 @@ section[data-type="sidebar"] > nav > ul > li > a {
 /*
  * Pages
  */
- #page-wrapper {
-   position: fixed;
-   left: 0;
-   right: 0;
-   top: 0;
-   bottom: 0;
-   background: #005471;
- }
- /*.page {
-   position: fixed;
-   left: 0;
-   right: 0;
-   top: 0;
-   bottom: 0;
-   background: #005471;
- }*/
+#page-wrapper,
+.page {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #005471;
+}
+
 #event-detail {
   display: none;
 }

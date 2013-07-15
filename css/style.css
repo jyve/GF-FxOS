@@ -12,6 +12,7 @@
 }
 html {
   font-size: 100%;
+  height: 100%;
 }
 body {
   background-color: #005471;
@@ -19,6 +20,7 @@ body {
   font-family: 'PT Sans';
   margin: 0;
   font-size: 1.2rem;
+  height: 100%;
 }
 h1 {
   font-size: 2em;
@@ -44,24 +46,67 @@ h2 {
   background-size: 100% auto;
   height: 8rem;
 }
-#content-wrapper {
+.content-wrapper {
   padding: 0.8rem;
+  overflow-y: scroll;
 }
 div[role=main] {
 /*  max-height: 100%;
   overflow-y: auto;*/
 }
-#content {
+.content {
   background-color: #fff;
   box-shadow: 7px 7px 0 #90a0a7;
   padding: 0.8rem;
+  margin-bottom: 1rem;
 }
 
 img {
   max-width: 100%;
 }
 
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+ 
+.clearfix {
+  display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+  display: block;
+}
+ 
+* html .clearfix {
+  height: 1%;
+}
+
 /* Event teasers */
 .teaser {
   cursor: pointer;
+  width: 100%;
+  border-bottom: 1px solid #cacacb;
+  padding: 1rem 0.2rem;
+}
+.teaser.even {
+  background-color: #f6f6f6;
+}
+.teaser .left {
+  width: 20%;
+  float: left;
+  color: #f04f40;
+  clear: both;
+}
+.teaser .middle {
+  float: left;
+  width: 70%;
+}
+.teaser .right {
+  float: left;
+  width: 10%;
 }

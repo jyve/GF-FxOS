@@ -75,9 +75,30 @@ $(function() {
   function addEventListeners () {
 
     /* Go to event detail page onclick */
-    $('#content').on('click', '.teaser', function(){
-      $('.page').hide();
-      $('#event-detail').show();
+    $('.content').on('click', '.teaser', function(){
+      // Get the event id
+      $this = $(this);
+      id = $this.attr('id').replace("event-","");
+      
+      // Query the database
+      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
+      var range = IDBKeyRange.only(id);
+      var results = [];
+      
+      store.openCursor(range).onsuccess = function(event) {
+        var cursor = event.target.result;
+        $('#event-detail .content').html(printDetailHTML(cursor.value));
+        $('.page:visible').addClass('back').hide();
+        $('#event-detail').show();
+        setScreenHeight();
+      };
+    });
+    
+    /* Go back from the detail page */
+    $('a.icon-back').click(function() {
+      $('.page.back').show();
+      setScreenHeight();        
+      $('#event-detail').hide();
     });
     
   }
@@ -90,7 +111,7 @@ $(function() {
     var now = new Date().getTime();
     var index = store.index("datum", "start");
     var range = IDBKeyRange.lowerBound(now);
-    var limit = 10;
+    var limit = 20;
     var i = 0;
     var results = [];
 
@@ -102,7 +123,7 @@ $(function() {
         cursor.continue();
       }
       else {
-        $('#content').html(printTeaserHTML(results));
+        $('#front .content').html(printTeaserHTML(results));
       }
     };
   }
@@ -112,16 +133,41 @@ $(function() {
    */
   function printTeaserHTML(events) {
     var output = '';
+    var extraClass="odd";
     for (var key in events) {
+      if (key%2 == 1) {
+        extraClass = 'even ';
+      }
+      else {
+        extraClass = 'odd ';
+      }
       var event = events[key];
-      output += '<div class="teaser">';
-      output += '<div class="left">' + event.start + new Date(event.datum * 1000) + '</div>';
+      output += '<div class="teaser ' + extraClass + 'clearfix" id="event-' + event.id + '">';
+      output += '<div class="left">' + event.start.replace(':', 'u') + '</div>';
       output += '<div class="middle">' + event.title + '</div>';
       output += '<div class="right">*</div>';
       output += '</div>';
     }
 
     return output;
+  }
+  
+  /**
+   * Return HTML for an event detail based on the id.
+   */
+  function printDetailHTML(event) {
+    var output = '';
+    output += event.title;
+
+    return output;
+  }
+  
+  /**
+   * Return HTML for an event detail based on the id.
+   */
+  function setScreenHeight() {
+    var contentHeight = $('body').height() - $('header:visible').outerHeight() - $('#subheader:visible').outerHeight();
+    $('.content-wrapper').height(contentHeight);
   }
 
   /*
@@ -135,7 +181,9 @@ $(function() {
         async: false
     }).responseText;
   }
-
+  
+  
+  setScreenHeight();
   openDb(getUpcomingEvents);
   addEventListeners();
 });
