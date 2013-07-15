@@ -87,7 +87,7 @@ $(function() {
       
       store.openCursor(range).onsuccess = function(event) {
         var cursor = event.target.result;
-        $('#event-detail .content').html(printDetailHTML(cursor.value));
+        $('#event-detail .content-wrapper').html(printDetailHTML(cursor.value));
         $('.page:visible').addClass('back').hide();
         $('#event-detail').show();
         setScreenHeight();
@@ -101,6 +101,10 @@ $(function() {
       $('#event-detail').hide();
     });
     
+    /* Resize content area if screen is resized */
+    $(window).resize(function() {
+      setScreenHeight();
+    });
   }
   
   /*
@@ -111,7 +115,7 @@ $(function() {
     var now = new Date().getTime();
     var index = store.index("datum", "start");
     var range = IDBKeyRange.lowerBound(now);
-    var limit = 20;
+    var limit = 10;
     var i = 0;
     var results = [];
 
@@ -123,7 +127,7 @@ $(function() {
         cursor.continue();
       }
       else {
-        $('#front .content').html(printTeaserHTML(results));
+        $('#front .content h2').after(printTeaserHTML(results));
       }
     };
   }
@@ -142,8 +146,15 @@ $(function() {
         extraClass = 'odd ';
       }
       var event = events[key];
-      output += '<div class="teaser ' + extraClass + 'clearfix" id="event-' + event.id + '">';
-      output += '<div class="left">' + event.start.replace(':', 'u') + '</div>';
+      output += '<div class="teaser row ' + extraClass + 'clearfix" id="event-' + event.id + '">';
+      output += '<div class="left">'
+      if (event.start) {
+        output += event.start.replace(':', 'u');
+      }
+      else {
+        output += 'Volledige dag';
+      }
+      output += '</div>';
       output += '<div class="middle">' + event.title + '</div>';
       output += '<div class="right">*</div>';
       output += '</div>';
@@ -157,7 +168,74 @@ $(function() {
    */
   function printDetailHTML(event) {
     var output = '';
-    output += event.title;
+
+    var info = [];
+    var labels = [];
+    
+    output += '<h2>' + event.title + '</h2>';
+    output += '<div class="content">';
+    if (event.loc) {
+      labels.push('Locatie');
+      if (event.lat && event.lon) {
+        info.push(event.loc + '<br /><a href="http://maps.google.com/?q=' + event.lat + ',' + event.lon + '">Toon op kaart</a>');      
+      }
+      else {
+        info.push(event.loc);  
+      }
+    }
+    if (event.datum) {
+      labels.push('Datum');
+      var date = new Date(event.datum * 1000);
+      var days = ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"];
+      var day = days[date.getDay()];
+      var months = ["Januari","Februari","Maart","April","Mei","Juni","Juli", "Augustus", "September", "Oktober", "November", "December"];
+      var month = months[date.getMonth()];
+      var dayNumeric = date.getUTCDate()
+      info.push(day + ' ' + dayNumeric + ' ' + month + '<br />' + event.periode);      
+    }
+    if (event.prijs) {
+      labels.push('Prijs');
+      info.push(event.prijs);      
+    }
+    if (event.prijs_vvk) {
+      labels.push('Prijs (voorverkoop)');
+      info.push(event.prijs_vvk);      
+    }
+    if (event.cat) {
+      labels.push('Categorie');
+      info.push(event.cat);      
+    }
+    if (event.omsch) {
+      labels.push('');
+      info.push(event.omsch);      
+    }
+    if (event.url) {
+      labels.push('');
+      info.push(event.url);      
+    }
+    
+    
+    // Print with odd/even striping.
+    for (var key in info) {
+      if (key%2 == 1) {
+        extraClass = 'even ';
+      }
+      else {
+        extraClass = 'odd ';
+      }
+      output += '<div class="row detail clearfix ' + extraClass + '">';
+      if (labels[key]) {
+        output += '<div class="left">' + labels[key] + '</div>';
+        output += '<div class="middle">' + info[key] + '</div>'; 
+      }
+      else {
+        output += info[key];
+      }
+      output += '</div>';
+      key += 1;
+    }
+    output += '</div>';
+
 
     return output;
   }
