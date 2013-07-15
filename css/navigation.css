@@ -53,6 +53,10 @@ section#drawer header a.icon-back {
   overflow: hidden;
 }
 
+section#drawer header:first-child > a .icon:after {
+  width: 2rem;
+}
+
 /* Hide anchor to change target */
 section#drawer header:first-child > a:last-of-type {
   visibility: visible;
@@ -122,6 +126,7 @@ section[data-type="sidebar"] > nav > h2 {
   border-bottom: 0.1rem solid #596068;
   margin: 0;
   padding-right: 0.8rem;
+  text-align: left;
 }
 section[data-type="sidebar"] [role="toolbar"] {
   position: absolute;

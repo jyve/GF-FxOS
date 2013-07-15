@@ -188,9 +188,10 @@ $(function() {
       var date = new Date(event.datum * 1000);
       var days = ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"];
       var day = days[date.getDay()];
-      var months = ["Januari","Februari","Maart","April","Mei","Juni","Juli", "Augustus", "September", "Oktober", "November", "December"];
+      var months = ["januari","februari","maart","april","mei","juni","juli", "augustus", "september", "oktober", "november", "december"];
       var month = months[date.getMonth()];
-      var dayNumeric = date.getUTCDate()
+      // TODO: why is this wrong by one day?
+      var dayNumeric = date.getUTCDate() + 1;
       info.push(day + ' ' + dayNumeric + ' ' + month + '<br />' + event.periode);      
     }
     if (event.prijs) {
@@ -259,7 +260,6 @@ $(function() {
         async: false
     }).responseText;
   }
-  
   
   setScreenHeight();
   openDb(getUpcomingEvents);
