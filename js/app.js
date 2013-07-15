@@ -1,10 +1,10 @@
-$(function() { 
-  
+$(function() {
+
   // Set some variables and constants
   const DB_NAME = 'gf';
   const DB_VERSION = 1;
   const DB_STORE_NAME = 'events';
-  
+
   var db;
   // Uncomment to drop the database before starting.
   //indexedDB.deleteDatabase('gf');
@@ -46,10 +46,25 @@ $(function() {
       //store.createIndex("festival", "festival", { unique: false });
 
       var events = JSON.parse(getEvents());
-      // Todo: add decent sorting.
-      
+
+      // Add extra sorting for the homepage.
       for (var key in events) {
-        store.add(events[key]);
+        var event = events[key];
+        var timestamp = 0;
+
+        // Convert sort to real timestamp.
+        var sort = event.sort;
+        if (sort.length > 1) {
+          if (sort.length == 4) {
+            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 2)) * 3600) + (parseInt(sort.substr(2, 4))));
+          }
+          else {
+            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 1)) * 3600) + (parseInt(sort.substr(1, 3))));
+          }
+        }
+
+        event.sort = timestamp;
+        store.add(event);
       }
     };
   }
@@ -73,12 +88,12 @@ $(function() {
   function getUpcomingEvents() {
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
     var now = new Date().getTime();
-    var index = store.index("datum", "start", "order");
+    var index = store.index("datum", "start");
     var range = IDBKeyRange.lowerBound(now);
     var limit = 10;
     var i = 0;
     var results = [];
-    
+
     index.openCursor(range).onsuccess = function(event) {
       var cursor = event.target.result;
       if (cursor && i < limit) {
@@ -105,10 +120,10 @@ $(function() {
       output += '<div class="right">*</div>';
       output += '</div>';
     }
-    
+
     return output;
-  } 
-  
+  }
+
   /*
    * Read the events.json file and return it's content.
    */
@@ -120,7 +135,7 @@ $(function() {
         async: false
     }).responseText;
   }
-  
+
   openDb(getUpcomingEvents);
   addEventListeners();
 });
