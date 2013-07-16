@@ -7,7 +7,7 @@ $(function() {
 
   var db;
   // Uncomment to drop the database before starting.
-  //indexedDB.deleteDatabase('gf');
+  indexedDB.deleteDatabase('gf');
 
   /*
    * This function opens the database connection,
@@ -35,7 +35,7 @@ $(function() {
       store.createIndex("datum", "datum", { unique: false });
       //store.createIndex("periode", "periode", { unique: false });
       store.createIndex("start", "start", { unique: false });
-      store.createIndex("sort", "sort", { unique: false });
+      store.createIndex("sort", "sort", { unique: false});
       //store.createIndex("cat", "cat", { unique: false });
       //store.createIndex("cat_id", "cat_id", { unique: false });
       //store.createIndex("url", "url", { unique: false });
@@ -75,11 +75,12 @@ $(function() {
    */
   function getUpcomingEvents() {
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
-    var now = new Date().getTime();
+    var now = parseInt(Math.round(+new Date()/1000));
     // Todo: sort by 'sort' field, and keep 0 out.
-    var index = store.index("datum", "start");
+//    var index = store.index("datum", "start");
+    var index = store.index("sort");
     var range = IDBKeyRange.lowerBound(now);
-    var limit = 20;
+    var limit = 40;
     var i = 0;
     var results = [];
 
@@ -107,7 +108,7 @@ $(function() {
   function getFilteredEvents(category, date, free, location) {
     // TODO: make this work with optional filters, given by the popup forms.
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
-    var now = new Date().getTime();
+    var now = Math.round(+new Date()/1000);
     var index = store.index("datum", "start");
     var range = IDBKeyRange.lowerBound(now);
     var limit = 10;
@@ -329,7 +330,7 @@ $(function() {
     });
     
     /* Date navigation */
-    $('#date-popup button').click(function() {
+    $('#date-popup button').not('#cancel').click(function() {
       var date = $(this).attr('value');
       // TODO: store this value in a filter.
       $('.page').hide();
