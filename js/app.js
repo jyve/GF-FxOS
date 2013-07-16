@@ -144,14 +144,21 @@ $(function() {
    */
   function printTeaserHTML(events) {
     var output = '';
-    var extraClass="odd";
+    var extraClass = "";
     for (var key in events) {
+      // Add extra classes for theming.
+      extraClass = "";
       if (key%2 == 1) {
-        extraClass = 'even ';
+        extraClass += 'even ';
       }
       else {
-        extraClass = 'odd ';
+        extraClass += 'odd ';
       }
+      if (key == 0) {
+        extraClass += 'first ';
+      }
+      
+      // Build the HTML.
       var event = events[key];
       output += '<div class="teaser row ' + extraClass + 'clearfix" id="event-' + event.id + '">';
       output += '<div class="left">'
@@ -159,7 +166,7 @@ $(function() {
         output += event.start.replace(':', 'u');
       }
       else {
-        output += 'Volledige dag';
+        output += 'Hele dag';
       }
       output += '</div>';
       output += '<div class="middle">' + event.title + '</div>';
@@ -175,7 +182,8 @@ $(function() {
    */
   function printDetailHTML(event) {
     var output = '';
-
+    var extraClass = "";
+    
     var info = [];
     var labels = [];
     
@@ -213,23 +221,30 @@ $(function() {
       labels.push('Categorie');
       info.push(event.cat);      
     }
-    if (event.omsch) {
+    if (event.omsch || event.url) {
       labels.push('');
-      info.push(event.omsch);      
+      var omsch = "";
+      if (event.omsch) {
+        omsch += event.omsch;      
+      }
+      if (event.url) {
+        omsch += '<br /><a href="' + event.url + '">' + event.url + '</a>';      
+      }
+      info.push(omsch);      
     }
-    if (event.url) {
-      labels.push('');
-      info.push(event.url);      
-    }
+
     
-    
-    // Print with odd/even striping.
     for (var key in info) {
+      // Add extra classes for theming.
+      extraClass = "";
       if (key%2 == 1) {
-        extraClass = 'even ';
+        extraClass += 'even ';
       }
       else {
-        extraClass = 'odd ';
+        extraClass += 'odd ';
+      }
+      if (key == 0) {
+        extraClass += 'first ';
       }
       output += '<div class="row detail clearfix ' + extraClass + '">';
       if (labels[key]) {
@@ -299,12 +314,13 @@ $(function() {
     });
     
     /* Cancel popup forms */
-    $('button#cancel').click(function() {
+    $('button#cancel').click(function(event) {
       $(this).parents('.page').hide();
+      event.preventDefault();
     });
     
     /* Category navigation */
-    $('#categories-popup button').click(function() {
+    $('#categories-popup button').not('#cancel').click(function() {
       var category = $(this).attr('value');
       // TODO: store this value in a filter.
       $(this).parents('.page').hide();

@@ -130,8 +130,11 @@ html[xmlns] .clearfix {
 }
 .row {
   width: 100%;
-  border-bottom: 1px solid #cacacb;
+  border-top: 1px solid #cacacb;
   padding: 1rem 0.2rem;
+}
+.row.first {
+  border-top: 0 none;
 }
 .row.even {
   background-color: #f6f6f6;
