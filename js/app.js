@@ -8,7 +8,7 @@ $(function() {
   const CATEGORIES = ["Bals / Dans", "Circus", "Comedy", "Concerten divers", "Jazz", "Klassieke concerten","Rock, pop, techno, blues, folk", "Kinderen", "Markten", "Sport en recreatie", "Tentoonstellingen", "Theater", "Varia", "Poezie", "Vuurwerk", "Wandelingen"];
   const LOC_IDS = [376, 390, 230, 385, 615, 382, 394, 380, 395, 379, 378, 384, 470, 392, 377, 381, 383, 386, 393, 387];
   const LOCATIONS = ["Baudelohof", "Beverhoutplein", "Bij Sint-Jacobs", "Bisdomplein", "Emile Braunplein", "Francois Laurentplein", "Gravensteen", "Groentemarkt", "Koningin Maria Hendrikaplein", "Korenlei - Graslei", "Korenmarkt", "Kouter", "Portus Ganda, Voorhoutkaai", "Sint-Bavo Humaniora - Reep 4", "St-Baafsplein", "St-Veerleplein", "Vlasmarkt", "Vrijdagmarkt", "Watersportbaan", "Woodrow Wilsonplein"];
-  
+
   var db;
   // Uncomment to drop the database before starting.
   //indexedDB.deleteDatabase('gf');
@@ -74,6 +74,9 @@ $(function() {
         // Add two hours on datum field.
         event.datum = parseInt(event.datum) + 7200;
 
+        // Add favorite property.
+        event.favorite = 0;
+
         store.add(event);
       }
     };
@@ -118,7 +121,7 @@ $(function() {
     console.log(free);
     console.log(loc_id);
     var results = [];
-    
+
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
     var now = Math.round(+new Date()/1000);
 
@@ -132,7 +135,7 @@ $(function() {
       var upperBound = [cat_id, parseInt(date), (now * now)];
       var range = IDBKeyRange.bound(lowerBound,upperBound);
     }
-    
+
     // If the category_id and date are set.
     if (loc_id) {
       var index = store.index("loc_id_datum_sort");
@@ -140,7 +143,8 @@ $(function() {
       var upperBound = [loc_id, parseInt(date), (now * now)];
       var range = IDBKeyRange.bound(lowerBound,upperBound);
     }
-    
+
+
     index.openCursor(range).onsuccess = function(event) {
       var cursor = event.target.result;
       if (cursor) {
@@ -197,7 +201,12 @@ $(function() {
       }
       output += '</div>';
       output += '<div class="middle">' + event.title + '</div>';
-      output += '<div class="right">*</div>';
+      if (event.favorite) {
+        output += '<div class="right favorited"><a class="un-favorite" id=' + event.id + ' href="#">fav</a></div>';
+      }
+      else {
+        output += '<div class="right not-favorited"><a class="favorite" id=' + event.id + ' href="#">not fav</a></div>';
+      }
       output += '</div>';
     }
 
@@ -296,7 +305,7 @@ $(function() {
     var contentHeight = $('body').height() - $('header:visible').outerHeight() - $('#subheader:visible').outerHeight();
     $('.content-wrapper').height(contentHeight);
   }
-  
+
   /**
    * Populate the categories and date popups based on the const arrays.
    */
@@ -306,7 +315,7 @@ $(function() {
       $('#categories-popup menu').append('<button value="' + CAT_IDS[key] + '">' + CATEGORIES[key] + '</button>');
     }
     $('#categories-popup menu').append('<button id="cancel">Annuleren</button>');
-    
+
     // Locations popup
     for (var key in LOC_IDS) {
       $('#locations-popup menu').append('<button value="' + LOC_IDS[key] + '">' + LOCATIONS[key] + '</button>');
@@ -328,7 +337,6 @@ $(function() {
       // Query the database
       var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
       var range = IDBKeyRange.only(id);
-      var results = [];
 
       store.openCursor(range).onsuccess = function(event) {
         var cursor = event.target.result;
@@ -344,6 +352,44 @@ $(function() {
       $('.page.back').show();
       setScreenHeight();
       $('#event-detail').hide();
+    });
+
+    /* Favorite an event */
+    $('.content').on('click', 'a.favorite', function() {
+      var event;
+      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
+      var range = IDBKeyRange.only($(this).attr('id'));
+
+      store.openCursor(range).onsuccess = function(e) {
+        var cursor = e.target.result;
+        event = cursor.value;
+        event.favorite = 1;
+        store.put(event);
+      };
+
+      $(this).html('fav');
+      $(this).attr('class', 'unfavorite');
+
+      return false;
+    });
+
+    /* Unfavorite an event */
+    $('.content').on('click', 'a.un-favorite', function() {
+      var event;
+      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
+      var range = IDBKeyRange.only($(this).attr('id'));
+
+      store.openCursor(range).onsuccess = function(e) {
+        var cursor = e.target.result;
+        event = cursor.value;
+        event.favorite = 0;
+        store.put(event);
+      };
+
+      $(this).html('not fav');
+      $(this).attr('class', 'favorite');
+
+      return false;
     });
 
     /* Resize content area if screen is resized */
@@ -373,7 +419,7 @@ $(function() {
       $('#date-popup input[name=cat_id]').val(cat_id);
       return false;
     });
-    
+
     /* Location navigation */
     $('#locations-popup button').not('#cancel').click(function() {
       var loc_id = $(this).attr('value');
