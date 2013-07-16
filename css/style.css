@@ -30,6 +30,9 @@ body {
 a {
   color: #f04f40;
 }
+button {
+  cursor: pointer;
+}
 h1 {
   font-size: 2em;
   color: #fff;
@@ -66,10 +69,7 @@ h2 {
   padding: 0.8rem;
   overflow-y: scroll;
 }
-div[role=main] {
-/*  max-height: 100%;
-  overflow-y: auto;*/
-}
+
 .content {
   background-color: #fff;
   box-shadow: 7px 7px 0 #90a0a7;
@@ -77,6 +77,27 @@ div[role=main] {
   margin-bottom: 3rem;
   width: 100%;
 }
+
+/*
+ * Pages
+ */
+#page-wrapper,
+.page {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #005471;
+}
+
+#filtered-events,
+#event-detail,
+#categories-popup,
+#date-popup {
+  display: none;
+}
+
 
 img {
   max-width: 100%;

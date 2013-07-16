@@ -14,6 +14,7 @@ $(function() {
    * and adds the events to the database if needed.
    */
   function openDb(callback) {
+    // Todo: add loading screen.
     var req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onsuccess = function (event) {
       db = this.result;
@@ -68,49 +69,43 @@ $(function() {
       }
     };
   }
-
+  
   /*
-   * Add event listeners for the navigation elements.
+   * Get the list of the 20 upcoming event teasers.
    */
-  function addEventListeners () {
+  function getUpcomingEvents() {
+    var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
+    var now = new Date().getTime();
+    // Todo: sort by 'sort' field, and keep 0 out.
+    var index = store.index("datum", "start");
+    var range = IDBKeyRange.lowerBound(now);
+    var limit = 20;
+    var i = 0;
+    var results = [];
 
-    /* Go to event detail page onclick */
-    $('.content').on('click', '.teaser', function(){
-      // Get the event id
-      $this = $(this);
-      id = $this.attr('id').replace("event-","");
-      
-      // Query the database
-      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
-      var range = IDBKeyRange.only(id);
-      var results = [];
-      
-      store.openCursor(range).onsuccess = function(event) {
-        var cursor = event.target.result;
-        $('#event-detail .content-wrapper').html(printDetailHTML(cursor.value));
-        $('.page:visible').addClass('back').hide();
-        $('#event-detail').show();
-        setScreenHeight();
-      };
-    });
-    
-    /* Go back from the detail page */
-    $('a.icon-back').click(function() {
-      $('.page.back').show();
-      setScreenHeight();        
-      $('#event-detail').hide();
-    });
-    
-    /* Resize content area if screen is resized */
-    $(window).resize(function() {
-      setScreenHeight();
-    });
+    index.openCursor(range).onsuccess = function(event) {
+      var cursor = event.target.result;
+      if (cursor && i < limit) {
+        results.push(cursor.value);
+        i += 1;
+        cursor.continue();
+      }
+      else {
+        $('#front .content h2').after(printTeaserHTML(results));
+      }
+    };
   }
   
   /*
-   * Read the events.json file and return it's content.
+   * Return a filtered list of event teasers.
+   * Params:
+   *  category
+   *  date
+   *  free
+   *  location
    */
-  function getUpcomingEvents() {
+  function getFilteredEvents(category, date, free, location) {
+    // TODO: make this work with optional filters, given by the popup forms.
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
     var now = new Date().getTime();
     var index = store.index("datum", "start");
@@ -127,9 +122,21 @@ $(function() {
         cursor.continue();
       }
       else {
-        $('#front .content h2').after(printTeaserHTML(results));
+        $('#filtered-events .content h2').html('naam van filter').after(printTeaserHTML(results));
       }
     };
+  }
+  
+  /*
+   * Read the events.json file and return it's content.
+   */
+  function getEvents() {
+    // TODO: see if this can return a JSON file.
+    return $.ajax({
+        type: "GET",
+        url: '../data/events.json',
+        async: false
+    }).responseText;
   }
 
   /**
@@ -250,15 +257,70 @@ $(function() {
   }
 
   /*
-   * Read the events.json file and return it's content.
+   * Add event listeners for the navigation elements.
    */
-  function getEvents() {
-    // TODO: see if this can return a JSON file.
-    return $.ajax({
-        type: "GET",
-        url: '../data/events.json',
-        async: false
-    }).responseText;
+  function addEventListeners () {
+
+    /* Go to event detail page onclick */
+    $('.content').on('click', '.teaser', function(){
+      // Get the event id
+      $this = $(this);
+      id = $this.attr('id').replace("event-","");
+      
+      // Query the database
+      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
+      var range = IDBKeyRange.only(id);
+      var results = [];
+      
+      store.openCursor(range).onsuccess = function(event) {
+        var cursor = event.target.result;
+        $('#event-detail .content-wrapper').html(printDetailHTML(cursor.value));
+        $('.page:visible').addClass('back').hide();
+        $('#event-detail').show();
+        setScreenHeight();
+      };
+    });
+    
+    /* Go back from the detail page */
+    $('a.icon-back').click(function() {
+      $('.page.back').show();
+      setScreenHeight();        
+      $('#event-detail').hide();
+    });
+    
+    /* Resize content area if screen is resized */
+    $(window).resize(function() {
+      setScreenHeight();
+    });
+    
+    /* Drawer navigation */
+    $('#categories-link').click(function() {
+      $('#categories-popup').show();
+    });
+    
+    /* Cancel popup forms */
+    $('button#cancel').click(function() {
+      $(this).parents('.page').hide();
+    });
+    
+    /* Category navigation */
+    $('#categories-popup button').click(function() {
+      var category = $(this).attr('value');
+      // TODO: store this value in a filter.
+      $(this).parents('.page').hide();
+      $('#date-popup').show();
+      return false;
+    });
+    
+    /* Date navigation */
+    $('#date-popup button').click(function() {
+      var date = $(this).attr('value');
+      // TODO: store this value in a filter.
+      $('.page').hide();
+      $('#filtered-events').show();
+      getFilteredEvents();
+      return false;
+    });
   }
   
   setScreenHeight();

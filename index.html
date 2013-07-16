@@ -7,8 +7,6 @@
 <script src="js/app.js"></script>
 <link type="text/css" rel="stylesheet" href="css/style.css" media="all" />
 <link type="text/css" rel="stylesheet" href="css/navigation.css" media="all" />
-<link href="css/toolbars.css" rel="stylesheet" type="text/css">
-<link href="css/action_icons.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <section data-type="sidebar" role="region">
@@ -22,7 +20,7 @@
     </ul>
     <h2>Programma</h2>
     <ul>
-      <li><a href="#content">Categorie‘n</a></li>
+      <li><a href="#content" id="categories-link">Categorie&euml;n</a></li>
       <li><a href="#content">Locaties</a></li>
       <li><a href="#content">Gratis</a></li>
       <li><a href="#content">In de buurt</a></li>
@@ -54,7 +52,51 @@
        <div class="content-wrapper">
          <div class="content"></div>
        </div>    
-    </div>    
+    </div>  
+    <!-- detailpage -->
+    <div id="filtered-events" class="page">
+      <header>
+        <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
+        <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
+        <h1>#GF13</h1>
+      </header>
+       <div class="content-wrapper">
+         <div class="content clearfix">
+            <h2>Todo: filternaam plaatsen</h2>
+         </div>
+       </div>    
+    </div>  
+    <!--  categories popup -->
+    <div id="categories-popup" class="page">
+      <form role="dialog" data-type="action" onsubmit="return false;">
+			  <header>Kies een categorie</header> <!-- this header is optional -->
+			  <menu>
+			  <!--  Todo: make this a dynamic list through javascript and 
+			        https://github.com/swentel/gentsefeesten/blob/master/res/values/arrays.xml -->
+			    <button value="21">Varia</button>
+			    <button value="25">Wandelingen</button>
+			    <button id="cancel">Annuleren</button>
+			  </menu>
+			</form>
+		</div>
+    <!--  date popup -->
+    <div id="date-popup" class="page">
+      <form role="dialog" data-type="action" onsubmit="return false;">
+        <header>Kies een datum</header>
+        <menu>
+        <!--  Todo: make this a dynamic list through javascript and 
+              https://github.com/swentel/gentsefeesten/blob/master/res/values/arrays.xml -->
+          <button value="1374278400">Zaterdag 20 juli</button>
+          <button value="1374364800">Zondag 21 juli</button>
+          <button value="1374451200">Maandag 22 juli</button>
+          <button value="1374537600">Dinsdag 23 juli</button>
+          <button value="1374624000">Woensdag 24 juli</button>
+          <button value="1374710400">Donderdag 25 juli</button>
+          <button id="cancel">Annuleren</button>
+        </menu>
+      </form>
+    </div>
+		
   </div>
 </section>
 
