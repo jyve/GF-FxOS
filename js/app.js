@@ -4,6 +4,7 @@ $(function() {
   const DB_NAME = 'gf';
   const DB_VERSION = 1;
   const DB_STORE_NAME = 'events';
+  const CAT_IDS = '';
 
   var db;
   // Uncomment to drop the database before starting.
@@ -106,7 +107,11 @@ $(function() {
    *  free
    *  location
    */
-  function getFilteredEvents(category, date, free, location) {
+  function getFilteredEvents(cat_id, date, free, loc_id) {
+    console.log(cat_id);
+    console.log(date);
+    console.log(free);
+    console.log(loc_id);
     // TODO: make this work with optional filters, given by the popup forms.
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
     var now = Math.round(+new Date()/1000);
@@ -163,7 +168,7 @@ $(function() {
       // Build the HTML.
       var event = events[key];
       output += '<div class="teaser row ' + extraClass + 'clearfix" id="event-' + event.id + '">';
-      output += '<div class="left">'
+      output += '<div class="left">';
       if (event.start) {
         output += event.start.replace(':', 'u');
       }
@@ -322,20 +327,24 @@ $(function() {
     
     /* Category navigation */
     $('#categories-popup button').not('#cancel').click(function() {
-      var category = $(this).attr('value');
+      var cat_id = $(this).attr('value');
       // TODO: store this value in a filter.
       $(this).parents('.page').hide();
       $('#date-popup').show();
+      $('#date-popup input[name=cat_id]').val(cat_id);
       return false;
     });
     
     /* Date navigation */
     $('#date-popup button').not('#cancel').click(function() {
+      var cat_id = $('input[name=cat_id]').attr('value');
       var date = $(this).attr('value');
-      // TODO: store this value in a filter.
+      var free = $('input[name=free]').attr('value');
+      var loc_id = $('input[name=loc_id]').attr('value');
+
       $('.page').hide();
       $('#filtered-events').show();
-      getFilteredEvents();
+      getFilteredEvents(cat_id, date, free, loc_id);
       return false;
     });
   }
