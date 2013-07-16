@@ -63,8 +63,11 @@ $(function() {
             timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 1)) * 3600) + (parseInt(sort.substr(1, 3)))) + 7200;
           }
         }
-
         event.sort = timestamp;
+        
+        // Add two hours on datum field.
+        event.datum = parseInt(event.datum) + 7200;
+        
         store.add(event);
       }
     };
@@ -199,14 +202,12 @@ $(function() {
     }
     if (event.datum) {
       labels.push('Datum');
-      //var date = Math.round(+new Date()/1000);
-      var date = new Date(event.datum * 1000);
+      var date = new Date(event.sort * 1000);
       var days = ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"];
       var day = days[date.getDay()];
       var months = ["januari","februari","maart","april","mei","juni","juli", "augustus", "september", "oktober", "november", "december"];
       var month = months[date.getMonth()];
-      // TODO: why is this wrong by one day?
-      var dayNumeric = date.getUTCDate() + 1;
+      var dayNumeric = date.getUTCDate();
       info.push(day + ' ' + dayNumeric + ' ' + month + '<br />' + event.periode);      
     }
     if (event.prijs) {
