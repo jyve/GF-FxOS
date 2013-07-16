@@ -4,8 +4,11 @@ $(function() {
   const DB_NAME = 'gf';
   const DB_VERSION = 1;
   const DB_STORE_NAME = 'events';
-  const CAT_IDS = '';
-
+  const CAT_IDS = [10, 24, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25];
+  const CATEGORIES = ["Bals / Dans", "Circus", "Comedy", "Concerten divers", "Jazz", "Klassieke concerten","Rock, pop, techno, blues, folk", "Kinderen", "Markten", "Sport en recreatie", "Tentoonstellingen", "Theater", "Varia", "Poezie", "Vuurwerk", "Wandelingen"];
+  const LOC_IDS = [];
+  const LOCATIONS = ["Baudelohof", "Beverhoutplein", "Bij Sint-Jacobs", "Bisdomplein", "Emile Braunplein", "Francois Laurentplein", "Gravensteen", "Groentemarkt", "Koningin Maria Hendrikaplein", "Korenlei - Graslei", "Korenmarkt", "Kouter", "Portus Ganda, Voorhoutkaai", "Sint-Bavo Humaniora - Reep 4", "St-Baafsplein", "St-Veerleplein", "Vlasmarkt", "Vrijdagmarkt", "Watersportbaan", "Woodrow Wilsonplein"];
+  
   var db;
   // Uncomment to drop the database before starting.
   indexedDB.deleteDatabase('gf');
@@ -28,15 +31,16 @@ $(function() {
 
     req.onupgradeneeded = function (event) {
       var store = event.target.result.createObjectStore(DB_STORE_NAME, { keyPath: "id" });
-      store.createIndex("title", "title", { unique: false });
+      //store.createIndex("title", "title", { unique: false });
       //store.createIndex("gratis", "gratis", { unique: false });
       //store.createIndex("prijs", "prijs", { unique: false });
       //store.createIndex("prijs_vvk", "prijs_vvk", { unique: false });
       //store.createIndex("omsch", "omsch", { unique: false });
-      store.createIndex("datum", "datum", { unique: false });
+      //store.createIndex("datum", "datum", { unique: false });
       //store.createIndex("periode", "periode", { unique: false });
-      store.createIndex("start", "start", { unique: false });
+      //store.createIndex("start", "start", { unique: false });
       store.createIndex("sort", "sort", { unique: false});
+      store.createIndex("cat_id_datum_sort", ['cat_id', 'datum', 'sort'], { unique: false});
       //store.createIndex("cat", "cat", { unique: false });
       //store.createIndex("cat_id", "cat_id", { unique: false });
       //store.createIndex("url", "url", { unique: false });
@@ -112,21 +116,26 @@ $(function() {
     console.log(date);
     console.log(free);
     console.log(loc_id);
-    // TODO: make this work with optional filters, given by the popup forms.
+    var results = [];
+    
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
     var now = Math.round(+new Date()/1000);
 
-    var index = store.index("datum", "start");
-    var range = IDBKeyRange.lowerBound(now);
-    var limit = 10;
-    var i = 0;
-    var results = [];
+    //var index = store.index("datum", "start");
+    //var range = IDBKeyRange.lowerBound(now);
 
+    // If the category_id and date are set.
+    if (cat_id) {
+      var index = store.index("cat_id_datum_sort");
+      var lowerBound = [cat_id, parseInt(date), now];
+      var upperBound = [cat_id, parseInt(date), (now * now)];
+      var range = IDBKeyRange.bound(lowerBound,upperBound);
+    }
+    
     index.openCursor(range).onsuccess = function(event) {
       var cursor = event.target.result;
-      if (cursor && i < limit) {
+      if (cursor) {
         results.push(cursor.value);
-        i += 1;
         cursor.continue();
       }
       else {
@@ -277,6 +286,23 @@ $(function() {
     var contentHeight = $('body').height() - $('header:visible').outerHeight() - $('#subheader:visible').outerHeight();
     $('.content-wrapper').height(contentHeight);
   }
+  
+  /**
+   * Populate the categories and date popups based on the const arrays.
+   */
+  function populatePopups() {
+    // Categories popup
+    for (var key in CAT_IDS) {
+      $('#categories-popup menu').append('<button value="' + CAT_IDS[key] + '">' + CATEGORIES[key] + '</button>');
+    }
+    $('#categories-popup menu').append('<button id="cancel">Annuleren</button>');
+    
+    // Categories popup
+    for (var key in CAT_IDS) {
+      $('#categories-popup menu').append('<button value="' + CAT_IDS[key] + '">' + CATEGORIES[key] + '</button>');
+    }
+    $('#categories-popup menu').append('<button id="cancel">Annuleren</button>');
+  }
 
   /*
    * Add event listeners for the navigation elements.
@@ -351,6 +377,7 @@ $(function() {
   }
 
   setScreenHeight();
+  populatePopups();
   openDb(getUpcomingEvents);
   addEventListeners();
 });
