@@ -57,10 +57,10 @@ $(function() {
         var sort = event.sort;
         if (sort.length > 1) {
           if (sort.length == 4) {
-            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 2)) * 3600) + (parseInt(sort.substr(2, 4))));
+            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 2)) * 3600) + (parseInt(sort.substr(2, 4)))) + 7200;
           }
           else {
-            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 1)) * 3600) + (parseInt(sort.substr(1, 3))));
+            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 1)) * 3600) + (parseInt(sort.substr(1, 3)))) + 7200;
           }
         }
 
@@ -71,13 +71,11 @@ $(function() {
   }
   
   /*
-   * Get the list of the 20 upcoming event teasers.
+   * Get the list of the 40 upcoming event teasers.
    */
   function getUpcomingEvents() {
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
     var now = parseInt(Math.round(+new Date()/1000));
-    // Todo: sort by 'sort' field, and keep 0 out.
-//    var index = store.index("datum", "start");
     var index = store.index("sort");
     var range = IDBKeyRange.lowerBound(now);
     var limit = 40;
@@ -201,6 +199,7 @@ $(function() {
     }
     if (event.datum) {
       labels.push('Datum');
+      //var date = Math.round(+new Date()/1000);
       var date = new Date(event.datum * 1000);
       var days = ["Zondag","Maandag","Dinsdag","Woensdag","Donderdag","Vrijdag","Zaterdag"];
       var day = days[date.getDay()];
