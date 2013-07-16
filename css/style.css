@@ -94,6 +94,7 @@ h2 {
 #filtered-events,
 #event-detail,
 #categories-popup,
+#locations-popup,
 #date-popup {
   display: none;
 }

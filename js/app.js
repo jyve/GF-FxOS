@@ -6,12 +6,12 @@ $(function() {
   const DB_STORE_NAME = 'events';
   const CAT_IDS = [10, 24, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25];
   const CATEGORIES = ["Bals / Dans", "Circus", "Comedy", "Concerten divers", "Jazz", "Klassieke concerten","Rock, pop, techno, blues, folk", "Kinderen", "Markten", "Sport en recreatie", "Tentoonstellingen", "Theater", "Varia", "Poezie", "Vuurwerk", "Wandelingen"];
-  const LOC_IDS = [];
+  const LOC_IDS = [376, 390, 230, 385, 615, 382, 394, 380, 395, 379, 378, 384, 470, 392, 377, 381, 383, 386, 393, 387];
   const LOCATIONS = ["Baudelohof", "Beverhoutplein", "Bij Sint-Jacobs", "Bisdomplein", "Emile Braunplein", "Francois Laurentplein", "Gravensteen", "Groentemarkt", "Koningin Maria Hendrikaplein", "Korenlei - Graslei", "Korenmarkt", "Kouter", "Portus Ganda, Voorhoutkaai", "Sint-Bavo Humaniora - Reep 4", "St-Baafsplein", "St-Veerleplein", "Vlasmarkt", "Vrijdagmarkt", "Watersportbaan", "Woodrow Wilsonplein"];
   
   var db;
   // Uncomment to drop the database before starting.
-  indexedDB.deleteDatabase('gf');
+  //indexedDB.deleteDatabase('gf');
 
   /*
    * This function opens the database connection,
@@ -41,6 +41,7 @@ $(function() {
       //store.createIndex("start", "start", { unique: false });
       store.createIndex("sort", "sort", { unique: false});
       store.createIndex("cat_id_datum_sort", ['cat_id', 'datum', 'sort'], { unique: false});
+      store.createIndex("loc_id_datum_sort", ['loc_id', 'datum', 'sort'], { unique: false});
       //store.createIndex("cat", "cat", { unique: false });
       //store.createIndex("cat_id", "cat_id", { unique: false });
       //store.createIndex("url", "url", { unique: false });
@@ -132,6 +133,14 @@ $(function() {
       var range = IDBKeyRange.bound(lowerBound,upperBound);
     }
     
+    // If the category_id and date are set.
+    if (loc_id) {
+      var index = store.index("loc_id_datum_sort");
+      var lowerBound = [loc_id, parseInt(date), now];
+      var upperBound = [loc_id, parseInt(date), (now * now)];
+      var range = IDBKeyRange.bound(lowerBound,upperBound);
+    }
+    
     index.openCursor(range).onsuccess = function(event) {
       var cursor = event.target.result;
       if (cursor) {
@@ -139,6 +148,7 @@ $(function() {
         cursor.continue();
       }
       else {
+        // TODO: empty before print
         $('#filtered-events .content h2').html('naam van filter').after(printTeaserHTML(results));
       }
     };
@@ -297,11 +307,11 @@ $(function() {
     }
     $('#categories-popup menu').append('<button id="cancel">Annuleren</button>');
     
-    // Categories popup
-    for (var key in CAT_IDS) {
-      $('#categories-popup menu').append('<button value="' + CAT_IDS[key] + '">' + CATEGORIES[key] + '</button>');
+    // Locations popup
+    for (var key in LOC_IDS) {
+      $('#locations-popup menu').append('<button value="' + LOC_IDS[key] + '">' + LOCATIONS[key] + '</button>');
     }
-    $('#categories-popup menu').append('<button id="cancel">Annuleren</button>');
+    $('#locations-popup menu').append('<button id="cancel">Annuleren</button>');
   }
 
   /*
@@ -345,6 +355,9 @@ $(function() {
     $('#categories-link').click(function() {
       $('#categories-popup').show();
     });
+    $('#locations-link').click(function() {
+      $('#locations-popup').show();
+    });
 
     /* Cancel popup forms */
     $('button#cancel').click(function(event) {
@@ -355,10 +368,18 @@ $(function() {
     /* Category navigation */
     $('#categories-popup button').not('#cancel').click(function() {
       var cat_id = $(this).attr('value');
-      // TODO: store this value in a filter.
       $(this).parents('.page').hide();
       $('#date-popup').show();
       $('#date-popup input[name=cat_id]').val(cat_id);
+      return false;
+    });
+    
+    /* Location navigation */
+    $('#locations-popup button').not('#cancel').click(function() {
+      var loc_id = $(this).attr('value');
+      $(this).parents('.page').hide();
+      $('#date-popup').show();
+      $('#date-popup input[name=loc_id]').val(loc_id);
       return false;
     });
 
