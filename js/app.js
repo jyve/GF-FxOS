@@ -65,15 +65,15 @@ $(function() {
           }
         }
         event.sort = timestamp;
-        
+
         // Add two hours on datum field.
         event.datum = parseInt(event.datum) + 7200;
-        
+
         store.add(event);
       }
     };
   }
-  
+
   /*
    * Get the list of the 40 upcoming event teasers.
    */
@@ -98,7 +98,7 @@ $(function() {
       }
     };
   }
-  
+
   /*
    * Return a filtered list of event teasers.
    * Params:
@@ -115,6 +115,7 @@ $(function() {
     // TODO: make this work with optional filters, given by the popup forms.
     var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
     var now = Math.round(+new Date()/1000);
+
     var index = store.index("datum", "start");
     var range = IDBKeyRange.lowerBound(now);
     var limit = 10;
@@ -133,7 +134,7 @@ $(function() {
       }
     };
   }
-  
+
   /*
    * Read the events.json file and return it's content.
    */
@@ -164,7 +165,7 @@ $(function() {
       if (key == 0) {
         extraClass += 'first ';
       }
-      
+
       // Build the HTML.
       var event = events[key];
       output += '<div class="teaser row ' + extraClass + 'clearfix" id="event-' + event.id + '">';
@@ -183,26 +184,26 @@ $(function() {
 
     return output;
   }
-  
+
   /**
    * Return HTML for an event detail based on the id.
    */
   function printDetailHTML(event) {
     var output = '';
     var extraClass = "";
-    
+
     var info = [];
     var labels = [];
-    
+
     output += '<h2>' + event.title + '</h2>';
     output += '<div class="content">';
     if (event.loc) {
       labels.push('Locatie');
       if (event.lat && event.lon) {
-        info.push(event.loc + '<br /><a href="http://maps.google.com/?q=' + event.lat + ',' + event.lon + '">Toon op kaart</a>');      
+        info.push(event.loc + '<br /><a href="http://maps.google.com/?q=' + event.lat + ',' + event.lon + '">Toon op kaart</a>');
       }
       else {
-        info.push(event.loc);  
+        info.push(event.loc);
       }
     }
     if (event.datum) {
@@ -213,33 +214,33 @@ $(function() {
       var months = ["januari","februari","maart","april","mei","juni","juli", "augustus", "september", "oktober", "november", "december"];
       var month = months[date.getMonth()];
       var dayNumeric = date.getUTCDate();
-      info.push(day + ' ' + dayNumeric + ' ' + month + '<br />' + event.periode);      
+      info.push(day + ' ' + dayNumeric + ' ' + month + '<br />' + event.periode);
     }
     if (event.prijs) {
       labels.push('Prijs');
-      info.push(event.prijs);      
+      info.push(event.prijs);
     }
     if (event.prijs_vvk) {
       labels.push('Prijs (voorverkoop)');
-      info.push(event.prijs_vvk);      
+      info.push(event.prijs_vvk);
     }
     if (event.cat) {
       labels.push('Categorie');
-      info.push(event.cat);      
+      info.push(event.cat);
     }
     if (event.omsch || event.url) {
       labels.push('');
       var omsch = "";
       if (event.omsch) {
-        omsch += event.omsch;      
+        omsch += event.omsch;
       }
       if (event.url) {
-        omsch += '<br /><a href="' + event.url + '">' + event.url + '</a>';      
+        omsch += '<br /><a href="' + event.url + '">' + event.url + '</a>';
       }
-      info.push(omsch);      
+      info.push(omsch);
     }
 
-    
+
     for (var key in info) {
       // Add extra classes for theming.
       extraClass = "";
@@ -255,7 +256,7 @@ $(function() {
       output += '<div class="row detail clearfix ' + extraClass + '">';
       if (labels[key]) {
         output += '<div class="left">' + labels[key] + '</div>';
-        output += '<div class="middle">' + info[key] + '</div>'; 
+        output += '<div class="middle">' + info[key] + '</div>';
       }
       else {
         output += info[key];
@@ -268,7 +269,7 @@ $(function() {
 
     return output;
   }
-  
+
   /**
    * Return HTML for an event detail based on the id.
    */
@@ -287,12 +288,12 @@ $(function() {
       // Get the event id
       $this = $(this);
       id = $this.attr('id').replace("event-","");
-      
+
       // Query the database
       var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
       var range = IDBKeyRange.only(id);
       var results = [];
-      
+
       store.openCursor(range).onsuccess = function(event) {
         var cursor = event.target.result;
         $('#event-detail .content-wrapper').html(printDetailHTML(cursor.value));
@@ -301,30 +302,30 @@ $(function() {
         setScreenHeight();
       };
     });
-    
+
     /* Go back from the detail page */
     $('a.icon-back').click(function() {
       $('.page.back').show();
-      setScreenHeight();        
+      setScreenHeight();
       $('#event-detail').hide();
     });
-    
+
     /* Resize content area if screen is resized */
     $(window).resize(function() {
       setScreenHeight();
     });
-    
+
     /* Drawer navigation */
     $('#categories-link').click(function() {
       $('#categories-popup').show();
     });
-    
+
     /* Cancel popup forms */
     $('button#cancel').click(function(event) {
       $(this).parents('.page').hide();
       event.preventDefault();
     });
-    
+
     /* Category navigation */
     $('#categories-popup button').not('#cancel').click(function() {
       var cat_id = $(this).attr('value');
@@ -334,7 +335,7 @@ $(function() {
       $('#date-popup input[name=cat_id]').val(cat_id);
       return false;
     });
-    
+
     /* Date navigation */
     $('#date-popup button').not('#cancel').click(function() {
       var cat_id = $('input[name=cat_id]').attr('value');
@@ -348,7 +349,7 @@ $(function() {
       return false;
     });
   }
-  
+
   setScreenHeight();
   openDb(getUpcomingEvents);
   addEventListeners();
