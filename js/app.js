@@ -11,7 +11,7 @@ $(function() {
   const DATES_INT = [1374278400, 1374364800, 1374451200, 1374537600, 1374624000, 1374710400, 1374796800, 1374883200, 1374969600, 1375056000];
   const DATES_FULL = ["Zaterdag 20 juli", "Zondag 21 juli", "Maandag 22 juli", "Dinsdag 23 juli", "Woensdag 24 juli", "Donderdag 25 juli", "Vrijdag 26 juli", "Zaterdag 27 juli", "Zondag 28 juli", "Maandag 29 juli"];
   
-  const NO_RESULTS = '<div class="row clearfix">Er werden geen resultaten gevonden.</div>';
+  const NO_RESULTS = '<div class="row clearfix">Er werden geen activiteiten gevonden.</div>';
   
   var db;
   // Uncomment to drop the database before starting.
@@ -91,6 +91,7 @@ $(function() {
         cursor.continue();
       }
       else {
+        $('#home .content .progress-wrapper').remove();
         $('#home .content h2').after(printTeaserHTML(results));
       }
     };
@@ -116,7 +117,13 @@ $(function() {
       }
       else {
         // Todo: add days as subheaders.
-        $('#favorites .content h2').after(printTeaserHTML(results));
+        $('#favorites .content .progress-wrapper').remove();
+        if (results.length > 0) {
+          $('#favorites .content h2').after(printTeaserHTML(results));        
+        }
+        else {
+          $('#favorites .content h2').after(NO_RESULTS);
+        }
       }
     };
   }
@@ -251,7 +258,7 @@ $(function() {
       output += '</div>';
       output += '<div class="middle">' + event.title + '</div>';
       if (event.favorite) {
-        output += '<div class="right favorited"><a class="un-favorite" id=' + event.id + ' href="#">fav</a></div>';
+        output += '<div class="right favorited"><a class="unfavorite" id=' + event.id + ' href="#">fav</a></div>';
       }
       else {
         output += '<div class="right not-favorited"><a class="favorite" id=' + event.id + ' href="#">not fav</a></div>';
@@ -376,10 +383,51 @@ $(function() {
    */
   function addEventListeners () {
 
+    /* Favorite an event */
+    $('.content').on('click', 'a.favorite', function(event) {
+      var event;
+      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
+      var range = IDBKeyRange.only($(this).attr('id'));
+
+      store.openCursor(range).onsuccess = function(e) {
+        var cursor = e.target.result;
+        event = cursor.value;
+        event.favorite = 1;
+        store.put(event);
+      };
+
+      $(this).html('fav');
+      $(this).attr('class', 'unfavorite');
+
+      event.preventDefault();
+      return false;
+    });
+    
+    /* Unfavorite an event */
+    $('.content').on('click', 'a.unfavorite', function(event) {
+      var event;
+      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
+      var range = IDBKeyRange.only($(this).attr('id'));
+
+      store.openCursor(range).onsuccess = function(e) {
+        var cursor = e.target.result;
+        event = cursor.value;
+        event.favorite = 0;
+        store.put(event);
+      };
+
+      $(this).html('not fav');
+      $(this).attr('class', 'favorite');
+      
+      event.preventDefault();
+      return false;
+    });    
+    
     /* Go to event detail page onclick */
-    $('.content').on('click', '.teaser', function(){
-      // Get the event id
+    $('.content').on('click', '.teaser', function(event){
       $this = $(this);
+
+      // Get the event id
       id = $this.attr('id').replace("event-","");
 
       // Query the database
@@ -400,50 +448,13 @@ $(function() {
       $('#event-detail').hide();
     });
 
-    /* Favorite an event */
-    $('.content').on('click', 'a.favorite', function() {
-      var event;
-      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
-      var range = IDBKeyRange.only($(this).attr('id'));
-
-      store.openCursor(range).onsuccess = function(e) {
-        var cursor = e.target.result;
-        event = cursor.value;
-        event.favorite = 1;
-        store.put(event);
-      };
-
-      $(this).html('fav');
-      $(this).attr('class', 'unfavorite');
-
-      return false;
-    });
-
-    /* Unfavorite an event */
-    $('.content').on('click', 'a.un-favorite', function() {
-      var event;
-      var store = db.transaction(DB_STORE_NAME, "readwrite").objectStore(DB_STORE_NAME);
-      var range = IDBKeyRange.only($(this).attr('id'));
-
-      store.openCursor(range).onsuccess = function(e) {
-        var cursor = e.target.result;
-        event = cursor.value;
-        event.favorite = 0;
-        store.put(event);
-      };
-
-      $(this).html('not fav');
-      $(this).attr('class', 'favorite');
-
-      return false;
-    });
-
     /* Drawer navigation */
     $('#home-link').click(function() {
       $('.page').hide();
+      getUpcomingEvents();
       $('#home').show();
     });
-    $('#favorites-link').click(function() {
+    $('#favorites-link, header .favorites').click(function() {
       $('.page').hide();
       getFavoriteEvents();
       $('#favorites').show();
@@ -456,6 +467,7 @@ $(function() {
     });
     $('#free-link').click(function() {
       $('#dates-popup').show();
+      clearFilters();
       $('#dates-popup input[name=free]').val(1);
     });
 
@@ -470,6 +482,7 @@ $(function() {
       var cat_id = $(this).attr('value');
       $(this).parents('.page').hide();
       $('#dates-popup').show();
+      clearFilters();
       $('#dates-popup input[name=cat_id]').val(cat_id);
       return false;
     });
@@ -479,6 +492,7 @@ $(function() {
       var loc_id = $(this).attr('value');
       $(this).parents('.page').hide();
       $('#dates-popup').show();
+      clearFilters();
       $('#dates-popup input[name=loc_id]').val(loc_id);
       return false;
     });
@@ -496,7 +510,12 @@ $(function() {
       return false;
     });
   }
-  // Todo: add show() function that animates?.
+  
+  // Clear the filter selections.
+  function clearFilters() {
+    $('#dates-popup input[name=cat_id], #dates-popup input[name=date], #dates-popup input[name=free], #dates-popup input[name=loc_id]').val('');
+  }
+  
   populatePopups();
   openDb(getUpcomingEvents);
   addEventListeners();

@@ -1,6 +1,6 @@
 { 
-  "name": "Gentse Feesten", 
-  "description": "Alle informatie over de Gentse Feesten in 2013.", 
+  "name": "Gentse Feesten 2013", 
+  "description": "Alle informatie over de Gentse Feesten in 2013 is nu off-line beschikbaar. Zoek op categorie, locatie en datum, of hou een lijstje van je favoriete activiteiten bij in een handig overzicht.", 
   "launch_path": "/index.html", 
   "developer": {
     "name": "Jan-Yves Vanhaverbeke"

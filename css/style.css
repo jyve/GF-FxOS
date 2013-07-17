@@ -83,7 +83,8 @@ h2 {
   padding: 0.8rem;
   margin-bottom: 1rem;
   width: 100%;
-  min-height: calc(100% - 4rem);
+  min-height: 100%;
+  position: relative;
 }
 
 /*
@@ -99,7 +100,6 @@ h2 {
   background: #005471;
 }
 
-/* Todo: change this to .page */
 #filtered-events,
 #event-detail,
 #categories-popup,
@@ -164,6 +164,75 @@ html[xmlns] .clearfix {
   width: 80%;
 }
 .row .right {
-  float: left;
+  float: right;
   width: 10%;
+}
+
+/* Favorites */
+a.favorite,
+a.unfavorite {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  background: transparent url(../images/fav_off.png) no-repeat center center;
+  text-indent: -10000px;
+  overflow: hidden;
+  z-index: 1000;
+}
+a.unfavorite {
+  background-image: url(../images/fav_on.png);
+}
+section#drawer header span.favorites {
+  overflow: hidden;
+  position: absolute;
+  display: inline-block;
+  width: 31px;
+  height: 33px;
+  z-index: 100;
+  background: transparent url(../images/go_to_fav.png) no-repeat center center;
+  text-indent: -10000px;
+  right: 0.5rem;
+  top: 0.8em;
+  width: 2.6rem;
+  height: 2rem;
+  cursor: pointer;
+}
+
+/* Progress bar */
+.progress-wrapper {
+  text-align: center;
+  height: 100%;
+  vertical-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+progress:not([value]) {
+  background: transparent url(../images/progress.png) no-repeat center center / 100% auto;
+  animation: 0.9s rotate infinite steps(30);
+  width: 29px;
+  height: 29px;
+  border: none;
+  display: inline-block;
+  vertical-align: middle;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+progress:not([value])::-moz-progress-bar {
+ background: none;
+}
+
+/* Animations */
+@keyframes rotate {
+  from { transform: rotate(1deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes move {
+  from { background-position: 0 0; }
+  to   { background-position: 1rem 0; }
 }
