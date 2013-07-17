@@ -15,8 +15,8 @@
   </header>
   <nav>
     <ul>
-      <li><a href="#content">Home</a></li>
-      <li><a href="#content">Mijn favorieten</a></li>
+      <li><a href="#content" id="home-link">Home</a></li>
+      <li><a href="#content" id="favorites-link">Mijn favorieten</a></li>
     </ul>
     <h2>Programma</h2>
     <ul>
@@ -26,10 +26,11 @@
     </ul>
   </nav>
 </section>
+<!--  Todo: how does this work? -->
 <section id="drawer">
   <div role="main" id="page-wrapper">
     <!--  frontpage -->
-    <div id="front" class="page">
+    <div id="home" class="page">
       <header>
 		    <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
 		    <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
@@ -39,6 +40,19 @@
 		   <div class="content-wrapper">
 		     <div class="content clearfix">
             <h2>Komende activiteiten</h2>
+		     </div>
+		   </div>    
+    </div>
+    <!--  Favorites -->
+    <div id="favorites" class="page">
+      <header>
+		    <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
+		    <a href="#drawer"><span class="icon icon-menu">show sidebar</span></a>
+		    <h1>#GF13</h1>
+		  </header>
+		   <div class="content-wrapper">
+		     <div class="content clearfix">
+            <h2>Favorieten</h2>
 		     </div>
 		   </div>    
     </div>
@@ -52,7 +66,7 @@
          <div class="content"></div>
        </div>    
     </div>  
-    <!-- detailpage -->
+    <!-- Filtered events -->
     <div id="filtered-events" class="page">
       <header>
         <a href="#content"><span class="icon icon-menu">hide sidebar</span></a>
@@ -61,15 +75,17 @@
       </header>
        <div class="content-wrapper">
          <div class="content clearfix">
-            <h2>Todo: filternaam plaatsen</h2>
+            <h2>Activiteiten</h2>
          </div>
        </div>    
     </div>  
-    <!--  categories popup -->
+    <!--  Categories popup -->
     <div id="categories-popup" class="page">
       <form role="dialog" data-type="action" onsubmit="return false;">
 			  <header><h1>Kies een categorie</h1></header>
 			  <menu>
+			  <div class="scrollable"></div>
+			  <button id="cancel">Annuleren</button>
 			  </menu>
 			</form>
 		</div>
@@ -78,26 +94,21 @@
       <form role="dialog" data-type="action" onsubmit="return false;">
 			  <header><h1>Kies een locatie</h1></header>
 			  <menu>
+			   <div class="scrollable"></div>
+         <button id="cancel">Annuleren</button>
 			  </menu>
 			</form>
 		</div>
     <!--  date popup -->
-    <div id="date-popup" class="page">
+    <div id="dates-popup" class="page">
       <form role="dialog" data-type="action" onsubmit="return false;">
         <header><h1>Kies een datum</h1></header>
         <input type="hidden" name="cat_id" value="" />
         <input type="hidden" name="loc_id" value="" />
         <input type="hidden" name="free" value="" />
         <menu>
-        <!--  Todo: make this a dynamic list through javascript and 
-              https://github.com/swentel/gentsefeesten/blob/master/res/values/arrays.xml -->
-          <button value="1374278400">Zaterdag 20 juli</button>
-          <button value="1374364800">Zondag 21 juli</button>
-          <button value="1374451200">Maandag 22 juli</button>
-          <button value="1374537600">Dinsdag 23 juli</button>
-          <button value="1374624000">Woensdag 24 juli</button>
-          <button value="1374710400">Donderdag 25 juli</button>
-          <button id="cancel">Annuleren</button>
+         <div class="scrollable"></div>
+         <button id="cancel">Annuleren</button>
         </menu>
       </form>
     </div>
