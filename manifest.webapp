@@ -9,5 +9,6 @@
     "60": "/images/icons/icon-60.png", 
     "128": "/images/icons/icon-128.png" 
   }, 
-  "default_locale": "en"
+  "default_locale": "en",
+  "version": "1.0.1"
 }

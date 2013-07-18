@@ -287,7 +287,7 @@ $(function() {
     if (event.loc) {
       labels.push('Locatie');
       if (event.lat && event.lon) {
-        info.push(event.loc + '<br /><a href="http://maps.google.com/?q=' + event.lat + ',' + event.lon + '">Toon op kaart</a>');
+        info.push(event.loc + '<br /><a target="_blank" href="http://maps.google.com/?q=' + event.lat + ',' + event.lon + '">Toon op kaart</a>');
       }
       else {
         info.push(event.loc);
@@ -326,7 +326,7 @@ $(function() {
         omsch += event.omsch;
       }
       if (event.url) {
-        omsch += '<br /><a href="' + event.url + '">' + event.url + '</a>';
+        omsch += '<br /><a target="_blank" href="' + event.url + '">' + event.url + '</a>';
       }
       info.push(omsch);
     }
