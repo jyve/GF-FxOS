@@ -329,7 +329,6 @@ form[role="dialog"][data-type="object"] > menu > button:last-child:before {
 form[role="dialog"][data-type="action"] > menu button:active,
 form[role="dialog"][data-type="object"] > menu button:active {
   background-color: #006f86;
-  color: #333;
   text-shadow: 0 0.1rem 0 rgba(255, 255, 255, 0.25);
 }
 

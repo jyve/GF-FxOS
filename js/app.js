@@ -12,7 +12,7 @@ $(function() {
   const DATES_FULL = ["Zaterdag 20 juli", "Zondag 21 juli", "Maandag 22 juli", "Dinsdag 23 juli", "Woensdag 24 juli", "Donderdag 25 juli", "Vrijdag 26 juli", "Zaterdag 27 juli", "Zondag 28 juli", "Maandag 29 juli"];
   
   const NO_RESULTS = '<div class="row clearfix">Er werden geen activiteiten gevonden.</div>';
-  
+
   var db;
   // Uncomment to drop the database before starting.
   //indexedDB.deleteDatabase('gf');
@@ -84,6 +84,7 @@ $(function() {
     var results = [];
 
     index.openCursor(range).onsuccess = function(event) {
+      
       var cursor = event.target.result;
       if (cursor && i < limit) {
         results.push(cursor.value);
@@ -92,7 +93,8 @@ $(function() {
       }
       else {
         $('#home .content .progress-wrapper').remove();
-        $('#home .content h2').after(printTeaserHTML(results));
+        var header = '<h2>' + $('#home .content h2').html() + '</h2>';
+        $('#home .content').html(header + printTeaserHTML(results));
       }
     };
   }
@@ -118,11 +120,12 @@ $(function() {
       else {
         // Todo: add days as subheaders.
         $('#favorites .content .progress-wrapper').remove();
+        var header = '<h2>' + $('#favorites .content h2').html() + '</h2>';
         if (results.length > 0) {
-          $('#favorites .content h2').after(printTeaserHTML(results));        
+          $('#favorites .content').html(header + printTeaserHTML(results));        
         }
         else {
-          $('#favorites .content h2').after(NO_RESULTS);
+          $('#favorites .content').html(header + NO_RESULTS);
         }
       }
     };
