@@ -53,8 +53,6 @@ $(function() {
         // Add favorite property.
         event.favorite = 0;
 
-        console.log(event);
-
         store.add(event);
 
       }
