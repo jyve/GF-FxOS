@@ -2,20 +2,20 @@ $(function() {
 
   // Set some variables and constants
   const DB_NAME = 'gf';
-  const DB_VERSION = 1;
+  const DB_VERSION = 2;
   const DB_STORE_NAME = 'events';
   const CAT_IDS = [10, 24, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25];
   const CATEGORIES = ["Bals / Dans", "Circus", "Comedy", "Concerten divers", "Jazz", "Klassieke concerten","Rock, pop, techno, blues, folk", "Kinderen", "Markten", "Sport en recreatie", "Tentoonstellingen", "Theater", "Varia", "Poezie", "Vuurwerk", "Wandelingen"];
   const LOC_IDS = [376, 390, 230, 385, 615, 382, 394, 380, 395, 379, 378, 384, 470, 392, 377, 381, 383, 386, 393, 387];
   const LOCATIONS = ["Baudelohof", "Beverhoutplein", "Bij Sint-Jacobs", "Bisdomplein", "Emile Braunplein", "Francois Laurentplein", "Gravensteen", "Groentemarkt", "Koningin Maria Hendrikaplein", "Korenlei - Graslei", "Korenmarkt", "Kouter", "Portus Ganda, Voorhoutkaai", "Sint-Bavo Humaniora - Reep 4", "St-Baafsplein", "St-Veerleplein", "Vlasmarkt", "Vrijdagmarkt", "Watersportbaan", "Woodrow Wilsonplein"];
-  const DATES_INT = [1374278400, 1374364800, 1374451200, 1374537600, 1374624000, 1374710400, 1374796800, 1374883200, 1374969600, 1375056000];
-  const DATES_FULL = ["Zaterdag 20 juli", "Zondag 21 juli", "Maandag 22 juli", "Dinsdag 23 juli", "Woensdag 24 juli", "Donderdag 25 juli", "Vrijdag 26 juli", "Zaterdag 27 juli", "Zondag 28 juli", "Maandag 29 juli"];
-  
+  const DATES_INT = [1405641600, 1405728000, 1405814400, 1405900800, 1405987200, 1406073600, 1406160000, 1406246400, 1406332800, 1406419200];
+  const DATES_FULL = ["Vrijdag 18 juli", "Zaterdag 19 juli", "Zondag 20 juli", "Maandag 21 juli", "Dinsdag 22 juli", "Woensdag 23 juli", "Donderdag 24 juli", "Vrijdag 25 juli", "Zaterdag 26 juli", "Zondag 27 juli"];
+
   const NO_RESULTS = '<div class="row clearfix">Er werden geen activiteiten gevonden.</div>';
 
   var db;
   // Uncomment to drop the database before starting.
-  //indexedDB.deleteDatabase('gf');
+  indexedDB.deleteDatabase('gf');
 
   /*
    * This function opens the database connection,
@@ -23,9 +23,10 @@ $(function() {
    */
   function openDb(callback) {
     // Todo: add loading screen.
-    var req = indexedDB.open(DB_NAME, DB_VERSION);
+
+    var req = window.indexedDB.open(DB_NAME, DB_VERSION);
     req.onsuccess = function (event) {
-      db = this.result;
+      db = event.target.result;
       // Show the list of upcoming events.
       callback();
     };
@@ -34,7 +35,9 @@ $(function() {
     };
 
     req.onupgradeneeded = function (event) {
-      var store = event.target.result.createObjectStore(DB_STORE_NAME, { keyPath: "id"});
+
+      db = event.target.result;
+      var store = db.createObjectStore(DB_STORE_NAME, { keyPath: "id"});
       store.createIndex("sort", "sort", { unique: false});
       store.createIndex("cat_id_datum_sort_title", ['cat_id', 'datum', 'sort', 'title'], { unique: false});
       store.createIndex("loc_id_datum_sort_title", ['loc_id', 'datum', 'sort', 'title'], { unique: false});
@@ -43,30 +46,17 @@ $(function() {
 
       var events = JSON.parse(getEvents());
 
-      // Add extra sorting for the homepage.
+      // Store events.
       for (var key in events) {
         var event = events[key];
-        var timestamp = 0;
-
-        // Convert sort to real timestamp.
-        var sort = event.sort;
-        if (sort.length > 1) {
-          if (sort.length == 4) {
-            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 2)) * 3600) + (parseInt(sort.substr(2, 4)))) + 7200;
-          }
-          else {
-            timestamp = parseInt(event.datum) + ((parseInt(sort.substr(0, 1)) * 3600) + (parseInt(sort.substr(1, 3)))) + 7200;
-          }
-        }
-        event.sort = timestamp;
-
-        // Add two hours on datum field.
-        event.datum = parseInt(event.datum) + 7200;
 
         // Add favorite property.
         event.favorite = 0;
 
+        console.log(event);
+
         store.add(event);
+
       }
     };
   }
@@ -84,7 +74,7 @@ $(function() {
     var results = [];
 
     index.openCursor(range).onsuccess = function(event) {
-      
+
       var cursor = event.target.result;
       if (cursor && i < limit) {
         results.push(cursor.value);
@@ -110,7 +100,7 @@ $(function() {
     var upperBound = [1, (now * now)];
     var range = IDBKeyRange.bound(lowerBound, upperBound);
     var results = [];
-    
+
     index.openCursor(range).onsuccess = function(event) {
       var cursor = event.target.result;
       if (cursor) {
@@ -122,7 +112,7 @@ $(function() {
         $('#favorites .content .progress-wrapper').remove();
         var header = '<h2>' + $('#favorites .content h2').html() + '</h2>';
         if (results.length > 0) {
-          $('#favorites .content').html(header + printTeaserHTML(results));        
+          $('#favorites .content').html(header + printTeaserHTML(results));
         }
         else {
           $('#favorites .content').html(header + NO_RESULTS);
@@ -180,7 +170,7 @@ $(function() {
         }
       }
     }
-    
+
     // If the free boolean and date are set.
     if (free) {
       index = store.index("gratis_datum_sort_title");
@@ -208,7 +198,7 @@ $(function() {
         header += '<h2>' + niceDate + '</h2>';
         // Print the html.
         if (results.length > 0) {
-          $('#filtered-events .content').html(header + printTeaserHTML(results));          
+          $('#filtered-events .content').html(header + printTeaserHTML(results));
         }
         else {
           $('#filtered-events .content').html(header + NO_RESULTS);
@@ -259,7 +249,7 @@ $(function() {
         output += 'Hele dag';
       }
       output += '</div>';
-      output += '<div class="middle">' + event.title + '</div>';
+      output += '<div class="middle">' + event.titel + '</div>';
       if (event.favorite) {
         output += '<div class="right favorited"><a class="unfavorite" id=' + event.id + ' href="#">fav</a></div>';
       }
@@ -282,7 +272,7 @@ $(function() {
     var info = [];
     var labels = [];
 
-    output += '<h2>' + event.title + '</h2>';
+    output += '<h2>' + event.titel + '</h2>';
     output += '<div class="content">';
     if (event.loc) {
       labels.push('Locatie');
@@ -374,7 +364,7 @@ $(function() {
     for (var key in LOC_IDS) {
       $('#locations-popup menu .scrollable').append('<button value="' + LOC_IDS[key] + '">' + LOCATIONS[key] + '</button>');
     }
-    
+
     // Date popup
     for (var key in DATES_INT) {
       $('#dates-popup menu .scrollable').append('<button value="' + DATES_INT[key] + '">' + DATES_FULL[key] + '</button>');
@@ -405,7 +395,7 @@ $(function() {
       event.preventDefault();
       return false;
     });
-    
+
     /* Unfavorite an event */
     $('.content').on('click', 'a.unfavorite', function(event) {
       var event;
@@ -421,11 +411,11 @@ $(function() {
 
       $(this).html('not fav');
       $(this).attr('class', 'favorite');
-      
+
       event.preventDefault();
       return false;
-    });    
-    
+    });
+
     /* Go to event detail page onclick */
     $('.content').on('click', '.teaser', function(event){
       $this = $(this);
@@ -499,7 +489,7 @@ $(function() {
       $('#dates-popup input[name=loc_id]').val(loc_id);
       return false;
     });
-    
+
     /* Date navigation */
     $('#dates-popup button').not('#cancel').click(function() {
       var cat_id = $('input[name=cat_id]').attr('value');
@@ -513,12 +503,12 @@ $(function() {
       return false;
     });
   }
-  
+
   // Clear the filter selections.
   function clearFilters() {
     $('#dates-popup input[name=cat_id], #dates-popup input[name=date], #dates-popup input[name=free], #dates-popup input[name=loc_id]').val('');
   }
-  
+
   populatePopups();
   openDb(getUpcomingEvents);
   addEventListeners();

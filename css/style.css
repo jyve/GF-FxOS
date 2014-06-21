@@ -11,8 +11,8 @@
     font-style: normal;
 }
 * {
- -moz-box-sizing: border-box; 
- -webkit-box-sizing: border-box; 
+ -moz-box-sizing: border-box;
+ -webkit-box-sizing: border-box;
  box-sizing: border-box;
 }
 html {
@@ -20,7 +20,7 @@ html {
   height: 100%;
 }
 body {
-  background-color: #005471;
+  background-color: #31297e;
   color: #333;
   font-family: 'PT Sans';
   margin: 0;
@@ -35,7 +35,7 @@ button {
 }
 h1 {
   font-size: 2em;
-  color: #fff;
+  color: #cda300;
   text-align: center;
   font-family: 'PT Sans Narrow';
   margin: 0;
@@ -64,7 +64,7 @@ h2 {
   padding-top: 1rem;
 }
 #subheader {
-  background: #005471 url(../images/subheader-bg.jpg) no-repeat center center;
+  background: #726cac url(../images/subheader-bg.png) no-repeat center center;
   background-size: 100% auto;
   height: 8rem;
 }
@@ -97,7 +97,7 @@ h2 {
   right: 0;
   top: 0;
   bottom: 0;
-  background: #005471;
+  background: #31297e;
 }
 
 #filtered-events,
@@ -122,15 +122,15 @@ img {
   line-height: 0;
   height: 0;
 }
- 
+
 .clearfix {
   display: inline-block;
 }
- 
+
 html[xmlns] .clearfix {
   display: block;
 }
- 
+
 * html .clearfix {
   height: 1%;
 }
@@ -153,7 +153,7 @@ html[xmlns] .clearfix {
 .row .left {
   width: 20%;
   float: left;
-  color: #f04f40;
+  color: #cda300;
   clear: both;
 }
 .row .middle {
@@ -226,7 +226,7 @@ progress:not([value])::-moz-progress-bar {
  background: none;
 }
 
-/* AnimationsÊ*/
+/* Animationsï¿½*/
 @keyframes rotate {
   from { transform: rotate(1deg); }
   to   { transform: rotate(360deg); }

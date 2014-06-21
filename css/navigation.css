@@ -10,13 +10,13 @@ section#drawer {
   transition: all 0.25s ease;
   position: relative;
   z-index: 100;
-  background-color: #005471;
+  background-color: #726cac;
   height: 100%;
   overflow: hidden;
 }
 section#drawer header {
-  background: #007390;
-  border-bottom: 0.2rem solid #005471;
+  background: #726cac;
+  border-bottom: 0.2rem solid #f6f6f6;
 }
 section#drawer:target {
   transform: translateX(80%);
@@ -28,7 +28,7 @@ section#drawer header a {
   top: 0.8rem;
   width: 2.6rem;
   height: 2rem;
-  background: #00586c;
+  background: #31297e;
   border-radius: 1.5rem;
   padding: 0 0.3rem;
   overflow: hidden;

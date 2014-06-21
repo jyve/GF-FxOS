@@ -1,14 +1,14 @@
-{ 
-  "name": "Gentse Feesten 2013", 
-  "description": "Alle informatie over de Gentse Feesten in 2013 is nu off-line beschikbaar. Zoek op categorie, locatie en datum, of hou een lijstje van je favoriete activiteiten bij in een handig overzicht.", 
-  "launch_path": "/index.html", 
+{
+  "name": "Gentse Feesten 2014",
+  "description": "Alle informatie over de Gentse Feesten in 2014 is nu off-line beschikbaar. Zoek op categorie, locatie en datum, of hou een lijstje van je favoriete activiteiten bij in een handig overzicht.",
+  "launch_path": "/index.html",
   "developer": {
     "name": "Jan-Yves Vanhaverbeke"
   },
-  "icons": { 
-    "60": "/images/icons/icon-60.png", 
-    "128": "/images/icons/icon-128.png" 
-  }, 
+  "icons": {
+    "60": "/images/icons/icon-60.png",
+    "128": "/images/icons/icon-128.png"
+  },
   "default_locale": "en",
-  "version": "1.0.1"
+  "version": "1.0.2"
 }
